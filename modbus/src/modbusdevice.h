@@ -1,5 +1,5 @@
-#ifndef my_device_H_
-#define my_device_H_
+#ifndef my_modbusdevice_H_
+#define my_modbusdevice_H_
 
 #include "modbus.h"
 

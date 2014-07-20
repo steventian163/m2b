@@ -50,3 +50,5 @@ Icon
 *.exe
 *.suo
 *.cache
+*.unsuccessfulbuild
+*.user

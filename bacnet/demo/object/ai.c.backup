@@ -24,8 +24,6 @@
 *
 *********************************************************************/
 
-// this is the m2b implementation. Find the ai.c.backup for the generic one.
-
 /* Analog Input Objects customize for your use */
 
 #include <stdbool.h>
@@ -43,10 +41,8 @@
 #include "ai.h"
 
 
-#include "modbusdevice.h"
-
 #ifndef MAX_ANALOG_INPUTS
-#define MAX_ANALOG_INPUTS 1
+#define MAX_ANALOG_INPUTS 4
 #endif
 
 
@@ -90,8 +86,6 @@ static const int Properties_Proprietary[] = {
     -1
 };
 
-static modbus_t* pModbusContext;
-
 void Analog_Input_Property_Lists(
     const int **pRequired,
     const int **pOptional,
@@ -115,21 +109,12 @@ void Analog_Input_Init(
 #if defined(INTRINSIC_REPORTING)
     unsigned j;
 #endif
-	// initialize modbus rtu;
-	pModbusContext = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
-	if (pModbusContext == NULL)
-	{
-		return;
-	}
 
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
         AI_Descr[i].Out_Of_Service = false;
-        AI_Descr[i].Units = UNITS_DEGREES_CELSIUS;
+        AI_Descr[i].Units = UNITS_PERCENT;
         AI_Descr[i].Reliability = RELIABILITY_NO_FAULT_DETECTED;
-		// TODO: use real object name
-		characterstring_init_ansi(&AI_Descr[i].ObjectName, "modbus rut");
-
 #if defined(INTRINSIC_REPORTING)
         AI_Descr[i].Event_State = EVENT_STATE_NORMAL;
         /* notification class not connected */
@@ -151,7 +136,6 @@ void Analog_Input_Init(
             Analog_Input_Alarm_Summary);
 #endif
     }
-
 }
 
 /* we simply have 0-n object instances.  Yours might be */
@@ -208,20 +192,8 @@ float Analog_Input_Present_Value(
 
     index = Analog_Input_Instance_To_Index(object_instance);
     if (index < MAX_ANALOG_INPUTS) {
-		// mytag: read AI value from modbus, also should have a way to lookup modbus device address according 
+		// mytag: read AI value from modbus, also should have a way to lookup modbus address according 
 		// to the object instance id. For the current case, the address is 2.
-
-		// use index as register address for now, 
-		// todo: use real register address
-		
-		if (pModbusContext != NULL)
-		{
-			uint16_t output;
-			if (modbus_read_input_registers(pModbusContext, index, 1, &output) < 0)
-			{
-				AI_Descr[index].Present_Value = ((float)output) / 10;
-			}
-		}
         value = AI_Descr[index].Present_Value;
     }
 

@@ -1,4 +1,4 @@
-#include "device.h"
+#include "modbusdevice.h"
 #include "mylogging.h"
 #include "modbus-rtu.h"
 #include "modbus-tcp.h"

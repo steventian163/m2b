@@ -64,7 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\device.h" />
+    <ClInclude Include="..\..\..\src\modbusdevice.h" />
     <ClInclude Include="..\..\..\src\modbus-private.h" />
     <ClInclude Include="..\..\..\src\modbus-rtu-private.h" />
     <ClInclude Include="..\..\..\src\modbus-rtu.h" />
@@ -75,7 +75,7 @@
     <ClInclude Include="..\..\..\src\mylogging.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\device.c" />
+    <ClCompile Include="..\..\..\src\modbusdevice.c" />
     <ClCompile Include="..\..\..\src\modbus-data.c" />
     <ClCompile Include="..\..\..\src\modbus-rtu.c" />
     <ClCompile Include="..\..\..\src\modbus-tcp.c" />
