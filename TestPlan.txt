@@ -1,0 +1,3 @@
+Purpose£º
+	Test the following pipeline:
+	Bacnet client => Gateway => Modbus => mock Serial Port => Modbus RTU

@@ -46,7 +46,7 @@
 #include "modbusdevice.h"
 
 #ifndef MAX_ANALOG_INPUTS
-#define MAX_ANALOG_INPUTS 1
+#define MAX_ANALOG_INPUTS 6
 #endif
 
 
@@ -112,6 +112,7 @@ void Analog_Input_Init(
     void)
 {
     unsigned i;
+	float x;
 #if defined(INTRINSIC_REPORTING)
     unsigned j;
 #endif
@@ -121,6 +122,16 @@ void Analog_Input_Init(
 	{
 		return;
 	}
+
+	/**
+	to del
+	**/
+	 x = Analog_Input_Present_Value(0);
+	 x = Analog_Input_Present_Value(1);
+	 x = Analog_Input_Present_Value(2);
+	 x = Analog_Input_Present_Value(3);
+	 x = Analog_Input_Present_Value(4);
+	/********/
 
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
@@ -217,7 +228,7 @@ float Analog_Input_Present_Value(
 		if (pModbusContext != NULL)
 		{
 			uint16_t output;
-			if (modbus_read_input_registers(pModbusContext, index, 1, &output) < 0)
+			if (modbus_read_registers(pModbusContext, index, 1, &output) > 0)
 			{
 				AI_Descr[index].Present_Value = ((float)output) / 10;
 			}
