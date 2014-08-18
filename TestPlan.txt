@@ -1,3 +1,14 @@
-Purpose£º
+Purpose:
 	Test the following pipeline:
 	Bacnet client => Gateway => Modbus => mock Serial Port => Modbus RTU
+
+
+
+bacrp.exe 29001 0 1 85 
+
+
+tools:
+
+1. Modbus slave: WinModBus
+2. Serial Port: free virtual serial ports
+3. bacnet: the bacnet stack's "who is" and "read property"
