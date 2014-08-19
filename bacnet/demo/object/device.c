@@ -108,6 +108,7 @@ static object_functions_t My_Object_Table[] = {
             NULL /* COV */ ,
             NULL /* COV Clear */ ,
         NULL /* Intrinsic Reporting */ },
+
     {OBJECT_ANALOG_INPUT,
             Analog_Input_Init,
             Analog_Input_Count,
@@ -122,7 +123,23 @@ static object_functions_t My_Object_Table[] = {
             NULL /* Value_Lists */ ,
             NULL /* COV */ ,
             NULL /* COV Clear */ ,
-        Analog_Input_Intrinsic_Reporting}
+        Analog_Input_Intrinsic_Reporting},
+		
+	{OBJECT_BINARY_INPUT,
+            Binary_Input_Init,
+            Binary_Input_Count,
+            Binary_Input_Index_To_Instance,
+            Binary_Input_Valid_Instance,
+            Binary_Input_Object_Name,
+            Binary_Input_Read_Property,
+			NULL,
+            Binary_Input_Property_Lists,
+            NULL /* ReadRangeInfo */ ,
+            NULL /* Iterator */ ,
+            Binary_Input_Encode_Value_List,
+            Binary_Input_Change_Of_Value,
+            Binary_Input_Change_Of_Value_Clear,
+        NULL /* Intrinsic Reporting */ },
 };
 
 /** Glue function to let the Device object, when called by a handler,

@@ -13,6 +13,7 @@
 
 #define modbus_serial_mode_device_water_cool_boxihua MODBUS_RTU_RS232
 
+modbus_t* P_Modbus_device = NULL;
 
 modbus_t* modbus_new_tcp_device()
 {

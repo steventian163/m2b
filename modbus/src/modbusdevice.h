@@ -5,6 +5,8 @@
 
 MODBUS_BEGIN_DECLS
 
+extern modbus_t* P_Modbus_device;
+ 
 
 typedef
 enum {

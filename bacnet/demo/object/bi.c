@@ -39,8 +39,10 @@
 #include "bi.h"
 #include "handlers.h"
 
+#include "modbusdevice.h"
+
 #ifndef MAX_BINARY_INPUTS
-#define MAX_BINARY_INPUTS 5
+#define MAX_BINARY_INPUTS 24
 #endif
 
 /* stores the current value */
@@ -127,7 +129,9 @@ void Binary_Input_Init(
 {
     static bool initialized = false;
     unsigned i;
-
+	
+	BACNET_BINARY_PV pv1;
+	int ii = 0;
     if (!initialized) {
         initialized = true;
 
@@ -135,8 +139,25 @@ void Binary_Input_Init(
         for (i = 0; i < MAX_BINARY_INPUTS; i++) {
             Present_Value[i] = BINARY_INACTIVE;
         }
+
+		
+		// initialize modbus rtu;
+		if (P_Modbus_device == NULL)
+		{
+			P_Modbus_device = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
+		}
+	
+		if (P_Modbus_device == NULL)
+		{
+			return;
+		}
     }
 
+	/*for (; ii < 10; ii++)
+	{
+		pv1 = Binary_Input_Present_Value(ii);
+	};*/
+	
     return;
 }
 
@@ -163,9 +184,30 @@ BACNET_BINARY_PV Binary_Input_Present_Value(
 
     index = Binary_Input_Instance_To_Index(object_instance);
     if (index < MAX_BINARY_INPUTS) {
-        value = Present_Value[index];
-    }
+		if (P_Modbus_device != NULL)
+		{
+			uint16_t output;
+			int addr = (index / 16) + 19;
+			if (modbus_read_registers(P_Modbus_device, addr, 1, &output) > 0)
+			{
+				if (BIT_CHECK(output,index))
+				{
+					value = BINARY_ACTIVE;
+				}
+				else
+				{
+					value = BINARY_INACTIVE;
+				}
+			}
+			
+			if (Present_Value[index] != value)
+			{
+				Change_Of_Value[index] = true;
+				Present_Value[index] = value;
+			}		
+		}
 
+    }
     return value;
 }
 

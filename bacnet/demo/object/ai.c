@@ -90,7 +90,6 @@ static const int Properties_Proprietary[] = {
     -1
 };
 
-static modbus_t* pModbusContext;
 
 void Analog_Input_Property_Lists(
     const int **pRequired,
@@ -113,12 +112,17 @@ void Analog_Input_Init(
 {
     unsigned i;
 	float x;
+	char pName[6];
 #if defined(INTRINSIC_REPORTING)
     unsigned j;
 #endif
 	// initialize modbus rtu;
-	pModbusContext = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
-	if (pModbusContext == NULL)
+	if (P_Modbus_device == NULL)
+	{
+		P_Modbus_device = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
+	}
+	
+	if (P_Modbus_device == NULL)
 	{
 		return;
 	}
@@ -126,20 +130,29 @@ void Analog_Input_Init(
 	/**
 	to del
 	**/
-	 x = Analog_Input_Present_Value(0);
+	/* x = Analog_Input_Present_Value(0);
 	 x = Analog_Input_Present_Value(1);
 	 x = Analog_Input_Present_Value(2);
 	 x = Analog_Input_Present_Value(3);
-	 x = Analog_Input_Present_Value(4);
+	 x = Analog_Input_Present_Value(4);*/
 	/********/
 
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
         AI_Descr[i].Out_Of_Service = false;
-        AI_Descr[i].Units = UNITS_DEGREES_CELSIUS;
+		if (i == 4 || i == 5)
+		{
+			AI_Descr[i].Units = UNITS_WATTS;
+		}
+		else
+		{
+			AI_Descr[i].Units = UNITS_DEGREES_CELSIUS;
+		}
+
         AI_Descr[i].Reliability = RELIABILITY_NO_FAULT_DETECTED;
 		// TODO: use real object name
-		characterstring_init_ansi(&AI_Descr[i].ObjectName, "modbus rut");
+		sprintf(pName, "AI #%d", i + 1);
+		characterstring_init_ansi(&AI_Descr[i].ObjectName, pName);
 
 #if defined(INTRINSIC_REPORTING)
         AI_Descr[i].Event_State = EVENT_STATE_NORMAL;
@@ -225,12 +238,19 @@ float Analog_Input_Present_Value(
 		// use index as register address for now, 
 		// todo: use real register address
 		
-		if (pModbusContext != NULL)
+		if (P_Modbus_device != NULL)
 		{
 			uint16_t output;
-			if (modbus_read_registers(pModbusContext, index, 1, &output) > 0)
+			if (modbus_read_registers(P_Modbus_device, index, 1, &output) > 0)
 			{
-				AI_Descr[index].Present_Value = ((float)output) / 10;
+				if (index < 4) //  the first four value has a ratio of 10
+				{
+					AI_Descr[index].Present_Value = ((float)output) / 10;
+				}
+				else
+				{
+					AI_Descr[index].Present_Value = ((float)output);
+				}
 			}
 		}
         value = AI_Descr[index].Present_Value;
