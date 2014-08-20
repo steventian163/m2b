@@ -46,7 +46,7 @@
 #include "modbusdevice.h"
 
 #ifndef MAX_ANALOG_INPUTS
-#define MAX_ANALOG_INPUTS 6
+#define MAX_ANALOG_INPUTS 12
 #endif
 
 
@@ -107,25 +107,42 @@ void Analog_Input_Property_Lists(
 }
 
 
+bool IsPowerAI(int i)
+{
+	return (i == 4 || i == 5 || i == (6 + 4) ||  i == (6 + 5));
+}
+
+int ToDeviceId(int index)
+{
+	// map to slave device 2 and 3
+	return index / 6 + 2;
+}
+int ToRegisterId(int index)
+{
+	return index % 6 + 1;
+}
+
+void GetAIName(int i, char* pName)
+{
+	sprintf(pName, "Device %d Register %d", ToDeviceId(i), ToRegisterId(i));
+}
+
+
 void Analog_Input_Init(
     void)
 {
     unsigned i;
 	float x;
-	char pName[6];
+	char pName[32];
 #if defined(INTRINSIC_REPORTING)
     unsigned j;
 #endif
 	// initialize modbus rtu;
-	if (P_Modbus_device == NULL)
-	{
-		P_Modbus_device = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
-	}
-	
-	if (P_Modbus_device == NULL)
+	if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
 	{
 		return;
 	}
+	
 
 	/**
 	to del
@@ -140,7 +157,7 @@ void Analog_Input_Init(
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
         AI_Descr[i].Out_Of_Service = false;
-		if (i == 4 || i == 5)
+		if (IsPowerAI(i))
 		{
 			AI_Descr[i].Units = UNITS_WATTS;
 		}
@@ -151,7 +168,8 @@ void Analog_Input_Init(
 
         AI_Descr[i].Reliability = RELIABILITY_NO_FAULT_DETECTED;
 		// TODO: use real object name
-		sprintf(pName, "AI #%d", i + 1);
+		GetAIName(i, pName);
+		/*sprintf(pName, "AI Device #%d #Register #%d", i/6 + 1, i + 1);*/
 		characterstring_init_ansi(&AI_Descr[i].ObjectName, pName);
 
 #if defined(INTRINSIC_REPORTING)
@@ -241,9 +259,9 @@ float Analog_Input_Present_Value(
 		if (P_Modbus_device != NULL)
 		{
 			uint16_t output;
-			if (modbus_read_registers(P_Modbus_device, index, 1, &output) > 0)
+			if (modbus_read_registers(GetModbus_Client(ToDeviceId(index)), ToRegisterId(index), 1, &output) > 0)
 			{
-				if (index < 4) //  the first four value has a ratio of 10
+				if (!IsPowerAI(index)) //  temperature device has a ratio of 10
 				{
 					AI_Descr[index].Present_Value = ((float)output) / 10;
 				}
@@ -281,7 +299,8 @@ bool Analog_Input_Object_Name(
 
     index = Analog_Input_Instance_To_Index(object_instance);
     if (index < MAX_ANALOG_INPUTS) {
-        sprintf(text_string, "ANALOG INPUT %lu", (unsigned long) index);
+		GetAIName(index, text_string);
+        //sprintf(text_string, "ANALOG INPUT %lu", (unsigned long) index);
         status = characterstring_init_ansi(object_name, text_string);
     }
 

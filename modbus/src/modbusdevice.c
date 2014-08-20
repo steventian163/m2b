@@ -13,7 +13,7 @@
 
 #define modbus_serial_mode_device_water_cool_boxihua MODBUS_RTU_RS232
 
-modbus_t* P_Modbus_device = NULL;
+modbus_t* P_Modbus_device[MaxDeviceCount];
 
 modbus_t* modbus_new_tcp_device()
 {
@@ -31,7 +31,36 @@ modbus_t* modbus_new_tcp_device()
 
 }
 
-modbus_t* modbus_new_rtu_device(const char* serial_port, rtu_device device)
+
+
+
+modbus_t* GetModbus_Client(int deviceAddress)
+{
+	if (deviceAddress > MaxDeviceCount)
+	{
+		return NULL;
+	}
+
+	if (P_Modbus_device[deviceAddress] == NULL)
+	{
+		if (deviceAddress == 2)
+		{
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM1", deviceAddress);
+		}
+		else if (deviceAddress == 3)
+		{
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM2", deviceAddress);
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+
+	return P_Modbus_device[deviceAddress];
+}
+
+modbus_t* modbus_new_rtu_device(const char* serial_port, int slaveAddr)
 {
 	modbus_t* context = modbus_new_rtu(serial_port, 
 		modbus_baud_rate_device_water_cool_boxihua,
@@ -54,7 +83,7 @@ modbus_t* modbus_new_rtu_device(const char* serial_port, rtu_device device)
 
 #endif 
 
-	if (modbus_set_slave(context, modbus_slave_address_device_water_cool_boxihua) < 0)
+	if (modbus_set_slave(context, slaveAddr) < 0)
 	{
 		my_log_error("modbus_set_slave");
 		return NULL;

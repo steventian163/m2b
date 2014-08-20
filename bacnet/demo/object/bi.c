@@ -42,7 +42,7 @@
 #include "modbusdevice.h"
 
 #ifndef MAX_BINARY_INPUTS
-#define MAX_BINARY_INPUTS 24
+#define MAX_BINARY_INPUTS 48
 #endif
 
 /* stores the current value */
@@ -107,6 +107,17 @@ bool Binary_Input_Valid_Instance(
     return false;
 }
 
+
+int GetBitAddr(int index)
+{
+				if (index >= 24)
+				{
+					index -= 24;
+				}
+
+				return index % 16;
+}
+
 /* we simply have 0-n object instances.  Yours might be */
 /* more complex, and then count how many you have */
 unsigned Binary_Input_Count(
@@ -142,9 +153,10 @@ void Binary_Input_Init(
 
 		
 		// initialize modbus rtu;
-		if (P_Modbus_device == NULL)
+		// initialize modbus rtu;
+		if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
 		{
-			P_Modbus_device = modbus_new_rtu_device("COM1", device_water_cool_boxihua);
+			return;
 		}
 	
 		if (P_Modbus_device == NULL)
@@ -176,6 +188,10 @@ unsigned Binary_Input_Instance_To_Index(
     return index;
 }
 
+
+#define ToRegisterId(index)  (((index < 24) ? (index / 16) : ((index - 24) / 16) )  + 19)
+#define ToDIDeviceAddr(index) (index / 24 + 2)
+
 BACNET_BINARY_PV Binary_Input_Present_Value(
     uint32_t object_instance)
 {
@@ -187,10 +203,9 @@ BACNET_BINARY_PV Binary_Input_Present_Value(
 		if (P_Modbus_device != NULL)
 		{
 			uint16_t output;
-			int addr = (index / 16) + 19;
-			if (modbus_read_registers(P_Modbus_device, addr, 1, &output) > 0)
+			if (modbus_read_registers(GetModbus_Client(ToDIDeviceAddr(index)), ToRegisterId(index), 1, &output) > 0)
 			{
-				if (BIT_CHECK(output,index))
+				if (BIT_CHECK(output,GetBitAddr(index)))
 				{
 					value = BINARY_ACTIVE;
 				}
@@ -335,12 +350,13 @@ bool Binary_Input_Object_Name(
     uint32_t object_instance,
     BACNET_CHARACTER_STRING * object_name)
 {
-    static char text_string[32] = "";   /* okay for single thread */
+    static char text_string[64] = "";   /* okay for single thread */
     bool status = false;
 
     if (object_instance < MAX_BINARY_INPUTS) {
-        sprintf(text_string, "BINARY INPUT %lu",
-            (unsigned long) object_instance);
+		sprintf(text_string, "Device %d Register %d bit %d", ToDIDeviceAddr(object_instance),
+			ToRegisterId(object_instance),
+			GetBitAddr(object_instance));
         status = characterstring_init_ansi(object_name, text_string);
     }
 
@@ -368,7 +384,6 @@ bool Binary_Input_Polarity_Set(
     if (object_instance < MAX_BINARY_INPUTS) {
         Polarity[object_instance] = polarity;
     }
-
     return status;
 }
 
