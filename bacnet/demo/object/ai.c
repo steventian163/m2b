@@ -46,7 +46,7 @@
 #include "modbusdevice.h"
 
 #ifndef MAX_ANALOG_INPUTS
-#define MAX_ANALOG_INPUTS 12
+#define MAX_ANALOG_INPUTS 24  // 6 * 4
 #endif
 
 
@@ -106,17 +106,24 @@ void Analog_Input_Property_Lists(
     return;
 }
 
-
 bool IsPowerAI(int i)
 {
-	return (i == 4 || i == 5 || i == (6 + 4) ||  i == (6 + 5));
+	int index = 0;
+	for (; i < 4; ++index)
+	{
+		if (i== (4 + index*6) || i == (5 + index * 6))
+		{
+			return true;
+		}
+	}
 }
 
 int ToDeviceId(int index)
 {
-	// map to slave device 2 and 3
+	// map to slave device 2 / 3 / 4 / 5
 	return index / 6 + 2;
 }
+
 int ToRegisterId(int index)
 {
 	return index % 6 + 1;
@@ -138,11 +145,23 @@ void Analog_Input_Init(
     unsigned j;
 #endif
 	// initialize modbus rtu;
-	if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
+	/*if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
 	{
 		return;
 	}
+	*/
+	modbus_t* p1 = GetModbus_Client(2);
 	
+	x = Analog_Input_Present_Value(1);
+	modbus_close_device(p1);
+	
+
+	p1 = GetModbus_Client(3);
+	
+	x = Analog_Input_Present_Value(1);
+	modbus_close_device(p1);
+
+
 
 	/**
 	to del

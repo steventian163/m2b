@@ -42,7 +42,7 @@
 #include "modbusdevice.h"
 
 #ifndef MAX_BINARY_INPUTS
-#define MAX_BINARY_INPUTS 48
+#define MAX_BINARY_INPUTS 96  // 24 * 4
 #endif
 
 /* stores the current value */
@@ -107,16 +107,19 @@ bool Binary_Input_Valid_Instance(
     return false;
 }
 
+//int GetBitAddr(int index)
+//{
+//				index = index % 24;
+//				return index % 16;
+//}
 
-int GetBitAddr(int index)
-{
-				if (index >= 24)
-				{
-					index -= 24;
-				}
+#define BIBitAddr(index) (index % 24 % 16)
+#define BIRegisterAddr(index) ((index % 24 / 16) + 19)
+#define BIDeviceAddr(index) (index / 24 + 2)
 
-				return index % 16;
-}
+//
+//#define ToRegisterId(index)  (((index < 24) ? (index / 16) : ((index - 24) / 16) )  + 19)
+//#define ToDIDeviceAddr(index) (index / 24 + 2)
 
 /* we simply have 0-n object instances.  Yours might be */
 /* more complex, and then count how many you have */
@@ -188,10 +191,6 @@ unsigned Binary_Input_Instance_To_Index(
     return index;
 }
 
-
-#define ToRegisterId(index)  (((index < 24) ? (index / 16) : ((index - 24) / 16) )  + 19)
-#define ToDIDeviceAddr(index) (index / 24 + 2)
-
 BACNET_BINARY_PV Binary_Input_Present_Value(
     uint32_t object_instance)
 {
@@ -203,9 +202,9 @@ BACNET_BINARY_PV Binary_Input_Present_Value(
 		if (P_Modbus_device != NULL)
 		{
 			uint16_t output;
-			if (modbus_read_registers(GetModbus_Client(ToDIDeviceAddr(index)), ToRegisterId(index), 1, &output) > 0)
+			if (modbus_read_registers(GetModbus_Client(BIDeviceAddr(index)), BIRegisterAddr(index), 1, &output) > 0)
 			{
-				if (BIT_CHECK(output,GetBitAddr(index)))
+				if (BIT_CHECK(output,BIBitAddr(index)))
 				{
 					value = BINARY_ACTIVE;
 				}
@@ -354,9 +353,9 @@ bool Binary_Input_Object_Name(
     bool status = false;
 
     if (object_instance < MAX_BINARY_INPUTS) {
-		sprintf(text_string, "Device %d Register %d bit %d", ToDIDeviceAddr(object_instance),
-			ToRegisterId(object_instance),
-			GetBitAddr(object_instance));
+		sprintf(text_string, "Device %d Register %d bit %d", BIDeviceAddr(object_instance),
+			BIRegisterAddr(object_instance),
+			BIBitAddr(object_instance));
         status = characterstring_init_ansi(object_name, text_string);
     }
 

@@ -17,6 +17,7 @@ modbus_t* P_Modbus_device[MaxDeviceCount];
 
 modbus_t* modbus_new_tcp_device()
 {
+	// ignore this. IP address.
 	modbus_t* pContext = modbus_new_tcp("192.168.1.12", 502);
 	modbus_set_slave(pContext, 2);
 
@@ -31,9 +32,6 @@ modbus_t* modbus_new_tcp_device()
 
 }
 
-
-
-
 modbus_t* GetModbus_Client(int deviceAddress)
 {
 	if (deviceAddress > MaxDeviceCount)
@@ -43,18 +41,29 @@ modbus_t* GetModbus_Client(int deviceAddress)
 
 	if (P_Modbus_device[deviceAddress] == NULL)
 	{
-		if (deviceAddress == 2)
+		P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
+		// luochao: how many com port we have? 
+		// one com port and multiple 
+		/*if (deviceAddress == 2)
 		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM1", deviceAddress);
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
 		}
 		else if (deviceAddress == 3)
 		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM2", deviceAddress);
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM6", deviceAddress);
+		}
+		else if (deviceAddress == 4)
+		{
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
+		}
+		else if (deviceAddress == 5)
+		{
+			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
 		}
 		else
 		{
 			return NULL;
-		}
+		}*/
 	}
 
 	return P_Modbus_device[deviceAddress];
