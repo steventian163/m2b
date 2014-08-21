@@ -11,7 +11,7 @@
 #define modbus_stopbit_device_water_cool_boxihua 1
 
 
-#define modbus_serial_mode_device_water_cool_boxihua MODBUS_RTU_RS232
+#define modbus_serial_mode_device_water_cool_boxihua MODBUS_RTU_RS485
 
 modbus_t* P_Modbus_device[MaxDeviceCount];
 

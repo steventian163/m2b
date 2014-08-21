@@ -152,28 +152,15 @@ void Analog_Input_Init(
 		return;
 	}
 	*/
-	/*modbus_t* p1 = GetModbus_Client(2);
+	/*
 	
 	x = Analog_Input_Present_Value(1);
-	modbus_close_device(p1);
+
 	
-
-	p1 = GetModbus_Client(3);
-	
-	x = Analog_Input_Present_Value(1);
-	modbus_close_device(p1);*/
+	x = Analog_Input_Present_Value(8);*/
 
 
 
-	/**
-	to del
-	**/
-	/* x = Analog_Input_Present_Value(0);
-	 x = Analog_Input_Present_Value(1);
-	 x = Analog_Input_Present_Value(2);
-	 x = Analog_Input_Present_Value(3);
-	 x = Analog_Input_Present_Value(4);*/
-	/********/
 
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
