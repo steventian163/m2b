@@ -15,6 +15,8 @@
 
 modbus_t* P_Modbus_device[MaxDeviceCount];
 
+int LastDeviceId = -1;
+
 modbus_t* modbus_new_tcp_device()
 {
 	// ignore this. IP address.
@@ -32,6 +34,17 @@ modbus_t* modbus_new_tcp_device()
 
 }
 
+int Modbus_Init()
+{
+
+	int i = 0;
+	for (; i< MaxDeviceCount; ++i)
+	{
+		P_Modbus_device[i] = NULL;
+	}
+	return 0;
+}
+
 modbus_t* GetModbus_Client(int deviceAddress)
 {
 	if (deviceAddress > MaxDeviceCount)
@@ -41,29 +54,16 @@ modbus_t* GetModbus_Client(int deviceAddress)
 
 	if (P_Modbus_device[deviceAddress] == NULL)
 	{
-		P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
-		// luochao: how many com port we have? 
-		// one com port and multiple 
-		/*if (deviceAddress == 2)
+		// close last device first
+		if (LastDeviceId >=0 && P_Modbus_device[LastDeviceId] != NULL)
 		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
+			modbus_close_device(P_Modbus_device[LastDeviceId]);
+			P_Modbus_device[LastDeviceId] = NULL;
 		}
-		else if (deviceAddress == 3)
-		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM6", deviceAddress);
-		}
-		else if (deviceAddress == 4)
-		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
-		}
-		else if (deviceAddress == 5)
-		{
-			P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM5", deviceAddress);
-		}
-		else
-		{
-			return NULL;
-		}*/
+
+		P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM2", deviceAddress);
+		LastDeviceId = deviceAddress;
+		
 	}
 
 	return P_Modbus_device[deviceAddress];

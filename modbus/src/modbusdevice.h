@@ -8,6 +8,7 @@ MODBUS_BEGIN_DECLS
 #define MaxDeviceCount 10
 extern modbus_t* P_Modbus_device[MaxDeviceCount];
  
+int Modbus_Init();
 
 typedef
 enum {

@@ -144,13 +144,15 @@ void Analog_Input_Init(
 #if defined(INTRINSIC_REPORTING)
     unsigned j;
 #endif
+
+	Modbus_Init();
 	// initialize modbus rtu;
 	/*if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
 	{
 		return;
 	}
 	*/
-	modbus_t* p1 = GetModbus_Client(2);
+	/*modbus_t* p1 = GetModbus_Client(2);
 	
 	x = Analog_Input_Present_Value(1);
 	modbus_close_device(p1);
@@ -159,7 +161,7 @@ void Analog_Input_Init(
 	p1 = GetModbus_Client(3);
 	
 	x = Analog_Input_Present_Value(1);
-	modbus_close_device(p1);
+	modbus_close_device(p1);*/
 
 
 

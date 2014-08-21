@@ -154,24 +154,21 @@ void Binary_Input_Init(
             Present_Value[i] = BINARY_INACTIVE;
         }
 
-		
-		// initialize modbus rtu;
-		// initialize modbus rtu;
-		if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
-		{
-			return;
-		}
-	
-		if (P_Modbus_device == NULL)
-		{
-			return;
-		}
+		Modbus_Init();
+
+		//
+		//// initialize modbus rtu;
+		//// initialize modbus rtu;
+		//if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
+		//{
+		//	return;
+		//}
     }
 
-	/*for (; ii < 10; ii++)
-	{
-		pv1 = Binary_Input_Present_Value(ii);
-	};*/
+	/*
+		pv1 = Binary_Input_Present_Value(28);
+		
+		pv1 = Binary_Input_Present_Value(0);*/
 	
     return;
 }
@@ -219,6 +216,11 @@ BACNET_BINARY_PV Binary_Input_Present_Value(
 				Change_Of_Value[index] = true;
 				Present_Value[index] = value;
 			}		
+			else
+			{
+
+				Change_Of_Value[index]		 = false;
+			}
 		}
 
     }
