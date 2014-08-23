@@ -107,19 +107,11 @@ bool Binary_Input_Valid_Instance(
     return false;
 }
 
-//int GetBitAddr(int index)
-//{
-//				index = index % 24;
-//				return index % 16;
-//}
-
 #define BIBitAddr(index) (index % 24 % 16)
 #define BIRegisterAddr(index) ((index % 24 / 16) + 19)
 #define BIDeviceAddr(index) (index / 24 + 2)
 
-//
-//#define ToRegisterId(index)  (((index < 24) ? (index / 16) : ((index - 24) / 16) )  + 19)
-//#define ToDIDeviceAddr(index) (index / 24 + 2)
+
 
 /* we simply have 0-n object instances.  Yours might be */
 /* more complex, and then count how many you have */
@@ -155,20 +147,7 @@ void Binary_Input_Init(
         }
 
 		Modbus_Init();
-
-		//
-		//// initialize modbus rtu;
-		//// initialize modbus rtu;
-		//if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
-		//{
-		//	return;
-		//}
     }
-
-	/*
-		pv1 = Binary_Input_Present_Value(28);
-		
-		pv1 = Binary_Input_Present_Value(0);*/
 	
     return;
 }

@@ -48,7 +48,7 @@ extern "C" {
         BACNET_RELIABILITY Reliability;
         bool Out_Of_Service;
         uint8_t Units;
-		BACNET_CHARACTER_STRING ObjectName; 
+		//BACNET_CHARACTER_STRING ObjectName; 
 #if defined(INTRINSIC_REPORTING)
         uint32_t Time_Delay;
         uint32_t Notification_Class;

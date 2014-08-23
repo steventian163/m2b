@@ -109,13 +109,16 @@ void Analog_Input_Property_Lists(
 bool IsPowerAI(int i)
 {
 	int index = 0;
-	for (; i < 4; ++index)
+	int max = i / 6;
+	for (; index < max + 1; ++index)
 	{
 		if (i== (4 + index*6) || i == (5 + index * 6))
 		{
 			return true;
 		}
 	}
+
+	return false;
 }
 
 int ToDeviceId(int index)
@@ -146,21 +149,6 @@ void Analog_Input_Init(
 #endif
 
 	Modbus_Init();
-	// initialize modbus rtu;
-	/*if (GetModbus_Client(2) == NULL || GetModbus_Client(3) == NULL)
-	{
-		return;
-	}
-	*/
-	/*
-	
-	x = Analog_Input_Present_Value(1);
-
-	
-	x = Analog_Input_Present_Value(8);*/
-
-
-
 
     for (i = 0; i < MAX_ANALOG_INPUTS; i++) {
         AI_Descr[i].Present_Value = 0.0f;
@@ -175,10 +163,6 @@ void Analog_Input_Init(
 		}
 
         AI_Descr[i].Reliability = RELIABILITY_NO_FAULT_DETECTED;
-		// TODO: use real object name
-		GetAIName(i, pName);
-		/*sprintf(pName, "AI Device #%d #Register #%d", i/6 + 1, i + 1);*/
-		characterstring_init_ansi(&AI_Descr[i].ObjectName, pName);
 
 #if defined(INTRINSIC_REPORTING)
         AI_Descr[i].Event_State = EVENT_STATE_NORMAL;
