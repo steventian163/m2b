@@ -15,7 +15,7 @@ enum {
 	device_water_cool_boxihua
 } rtu_device;
 
-modbus_t* modbus_new_rtu_device(const char* serial_port, rtu_device device);
+modbus_t* modbus_new_rtu_device(const char* serial_port, int device);
 
 
 modbus_t* modbus_new_tcp_device();
