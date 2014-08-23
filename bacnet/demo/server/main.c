@@ -78,11 +78,13 @@ static void Init_Service_Handlers(
     void)
 {
     Device_Init(NULL);
+	printf("Device_Init");
     /* we need to handle who-is to support dynamic device binding */
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_WHO_IS, handler_who_is);
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_WHO_HAS, handler_who_has);
     /* handle i-am to support binding to other devices */
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_I_AM, handler_i_am_bind);
+	printf("handler_i_am_bind");
     /* set the handler for all the services we don't implement */
     /* It is required to send the proper reject message... */
     apdu_set_unrecognized_service_handler_handler
@@ -168,13 +170,18 @@ int main(
     /* load any static address bindings to show up
        in our device bindings list */
     address_init();
+	printf("after  address_init");
     Init_Service_Handlers();
+	printf("after  Init_Service_Handlers");
     dlenv_init();
+	printf("after  Init_Service_Handlers");
     atexit(datalink_cleanup);
+	printf("after  Init_Service_Handlers");
     /* configure the timeout values */
     last_seconds = time(NULL);
     /* broadcast an I-Am on startup */
     Send_I_Am(&Handler_Transmit_Buffer[0]);
+	printf("after  Send_I_Am");
     /* loop forever */
     for (;;) {
         /* input */

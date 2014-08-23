@@ -74,7 +74,7 @@
       <CompileAs>CompileAsC</CompileAs>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionPath)\..\..\..\..\Include;$(SolutionPath)\..\..\..\..\demo\object;$(SolutionPath)\..\..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionPath)\..\..\..\..\Include;$(SolutionPath)\..\..\..\..\demo\object;$(SolutionPath)\..\..;$(SolutionPath)\..\..\..\..\modbus\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>ws2_32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

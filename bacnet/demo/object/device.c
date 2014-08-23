@@ -92,6 +92,7 @@ static object_functions_t *Object_Table;
 
 
 // MYTAG: service initialization of all supported objects.
+int maxObjectSizeInMyTable = 3;
 static object_functions_t My_Object_Table[] = {
     {OBJECT_DEVICE,
             NULL /* Init - don't init Device or it will recourse! */ ,
@@ -139,7 +140,7 @@ static object_functions_t My_Object_Table[] = {
             Binary_Input_Encode_Value_List,
             Binary_Input_Change_Of_Value,
             Binary_Input_Change_Of_Value_Clear,
-        NULL /* Intrinsic Reporting */ },
+        NULL /* Intrinsic Reporting */ }
 };
 
 /** Glue function to let the Device object, when called by a handler,
@@ -1600,20 +1601,32 @@ void Device_Init(
     object_functions_t * object_table)
 {
     struct object_functions *pObject = NULL;
+	int objectCount = 0;
 
     characterstring_init_ansi(&My_Object_Name, "Gateway-b2c");
     if (object_table) {
         Object_Table = object_table;
+		printf("Object_Table\n");
     } else {
         Object_Table = &My_Object_Table[0];
     }
+
+	printf("characterstring_init_ansi\n");
+
+	objectCount = maxObjectSizeInMyTable;
     pObject = Object_Table;
-    while (pObject->Object_Type < MAX_BACNET_OBJECT_TYPE) {
+    while ((objectCount-- > 0) && pObject->Object_Type < MAX_BACNET_OBJECT_TYPE) {
+		
+		printf("init started for %d\n", pObject->Object_Type);
         if (pObject->Object_Init) {
             pObject->Object_Init();
         }
+		printf("init finished for %d\n", pObject->Object_Type);
         pObject++;
+		printf("init for %d\n", pObject);
     }
+	
+	printf("Object_Init----------------\n");
 }
 
 bool DeviceGetRRInfo(
