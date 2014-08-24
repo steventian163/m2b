@@ -191,7 +191,8 @@ int main(
         pdu_len = datalink_receive(&src, &Rx_Buf[0], MAX_MPDU, timeout);
 
         /* process */
-        if (pdu_len) {
+        if (pdu_len) {			
+			printf("Got accept request.\n");
             npdu_handler(&src, &Rx_Buf[0], pdu_len);
         }
         /* at least one second has passed */

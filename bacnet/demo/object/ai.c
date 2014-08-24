@@ -121,16 +121,18 @@ bool IsPowerAI(int i)
 	return false;
 }
 
-int ToDeviceId(int index)
-{
-	// map to slave device 2 / 3 / 4 / 5
-	return index / 6 + 2;
-}
+#define ToDeviceId(index) (index / 6 + 2)
+#define ToRegisterId(index) (index % 6 + 1)
+//int ToDeviceId(int index)
+//{
+//	// map to slave device 2 / 3 / 4 / 5
+//	return index / 6 + 2;
+//}
 
-int ToRegisterId(int index)
-{
-	return index % 6 + 1;
-}
+//int ToRegisterId(int index)
+//{
+//	return index % 6 + 1;
+//}
 
 void GetAIName(int i, char* pName)
 {
