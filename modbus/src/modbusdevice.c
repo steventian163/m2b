@@ -57,11 +57,16 @@ modbus_t* GetModbus_Client(int deviceAddress)
 		// close last device first
 		if (LastDeviceId >=0 && P_Modbus_device[LastDeviceId] != NULL)
 		{
-			modbus_close_device(P_Modbus_device[LastDeviceId]);
+			modbus_close_device(P_Modbus_device[LastDeviceId]);			
 			P_Modbus_device[LastDeviceId] = NULL;
 		}
 
+		//TODO: Put the serial port to configuration file. 
+#ifdef _WIN32
 		P_Modbus_device[deviceAddress] = modbus_new_rtu_device("COM2", deviceAddress);
+#else
+		P_Modbus_device[deviceAddress] = modbus_new_rtu_device("/dev/ttyO1", deviceAddress);
+#endif
 		LastDeviceId = deviceAddress;
 		
 	}

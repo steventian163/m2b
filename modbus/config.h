@@ -6,7 +6,11 @@
 
 /* Define to 1 if you have the declaration of `TIOCSRS485', and to 0 if you
    don't. */
-#define HAVE_DECL_TIOCSRS485 0
+#ifdef _WIN32
+	#define HAVE_DECL_TIOCSRS485 0
+#else 
+	#define HAVE_DECL_TIOCSRS485 1
+#endif
 
 /* Define to 1 if you have the declaration of `__CYGWIN__', and to 0 if you
    don't. */
