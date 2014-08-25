@@ -127,7 +127,7 @@ am__installdirs = "$(DESTDIR)$(libdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libmodbus_la_DEPENDENCIES =
 am_libmodbus_la_OBJECTS = modbus.lo modbus-data.lo modbus-rtu.lo \
-	modbus-tcp.lo
+	modbus-tcp.lo modbusdevice.lo mylogging.lo
 libmodbus_la_OBJECTS = $(am_libmodbus_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
